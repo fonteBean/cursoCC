@@ -1,0 +1,1 @@
+889080	Tempo de execução = 1680234ms	Numero de Comparacoes = 78062

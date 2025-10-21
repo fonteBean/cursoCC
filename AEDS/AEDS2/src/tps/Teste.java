@@ -1,4 +1,4 @@
-package exercicios;
+package tps;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -6,44 +6,56 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
-import exercicios.models.*;
 
-public class Main{
+import exercicios.models.Game;
+public class Teste {
 
-    static long tempo;
+
+
     static int comparacoes = 0;
-    
-    public static void criaHeap(ArrayList<Game> jogos, int tam, int i){
-        int raiz = i;
-        int esq = 2*i+1;
-        int dir = 2*i+2;
-      
-        if (esq < tam) {
-            comparacoes++; 
-            if (jogos.get(esq).getId() > jogos.get(raiz).getId()){
-                raiz = esq;
-                comparacoes++; 
+    static long tempo;
+
+    public static int comparaNomes(String a, String b) {
+        int len = Math.min(a.length(), b.length());
+
+        for (int i = 0; i < len; i++) {
+            char ca = a.charAt(i);
+            char cb = b.charAt(i);
+
+            if (ca != cb) {
+                return ca - cb; 
             }
         }
 
-     
-        if (dir < tam) {
-            comparacoes++; 
-            if (jogos.get(dir).getId() > jogos.get(raiz).getId()){
-                raiz = dir;
-                comparacoes++; 
+        return a.length() - b.length();
+    }   
 
-            }
+    public static void criaHeap(ArrayList<Game> jogos, int tam, int i) {
+    int raiz = i;
+    int esq = 2 * i + 1;
+    int dir = 2 * i + 2;
+
+    if (esq < tam) {
+        comparacoes++;
+        if (comparaNomes(jogos.get(esq).getNome(), jogos.get(raiz).getNome()) > 0) {
+            raiz = esq;
         }
-        if (raiz != i){
-            comparacoes++; 
-            Game aux = jogos.get(i);
-            jogos.set(i, jogos.get(raiz));
-            jogos.set(raiz, aux);
-            criaHeap(jogos, tam, raiz);
-        }
-        return;
     }
+
+    if (dir < tam) {
+        comparacoes++;
+        if (comparaNomes(jogos.get(dir).getNome(), jogos.get(raiz).getNome()) > 0) {
+            raiz = dir;
+        }
+    }
+
+    if (raiz != i) {
+        Game aux = jogos.get(i);
+        jogos.set(i, jogos.get(raiz));
+        jogos.set(raiz, aux);
+        criaHeap(jogos, tam, raiz);
+    }
+}
     public static  void heapsort(ArrayList<Game> jogos)
     {
         int tam = jogos.size();
@@ -62,34 +74,35 @@ public class Main{
     
 
    public static void escreveLog() {
-    String path = "AEDS/AEDS2/src/exercicios/log.txt";
+    String path = "AEDS/AEDS2/src/tps/src/tp05/log.txt";
 
-    try (FileWriter escritor = new FileWriter(path)) { 
+    try (FileWriter escritor = new FileWriter(path,true)) { 
         escritor.write("889080\t" + "Tempo de execução = " + tempo + "ms\tNumero de Comparacoes = " + comparacoes);
     } catch (IOException e) {
         System.err.println("Erro ao escrever o log: " + e.getMessage());
     }
 }
 
-    public static Game buscarPorId(ArrayList<Game> jogos, int id) {
+    public static boolean buscarPorNome(ArrayList<Game> jogos, String nome) {
     int esq = 0;
     int dir = jogos.size() - 1;
     while (esq <= dir) {
         int meio = esq + (dir - esq) / 2;
-        int meioID = jogos.get(meio).getId();
-        if (meioID == id) {
-            return jogos.get(meio);
-        } else if (meioID < id) {
+        String meioNome = jogos.get(meio).getNome();
+        if (meioNome.equals(nome)) {
+            return true;
+        } else if (comparaNomes(meioNome, nome) < 0 ) {
             esq = meio + 1;
         } else {
             dir = meio - 1;
         }
     }
-    return null;
-}
-    public static  void main(String[] args) {
+    return false;
+    }
+   
+     public static  void main(String[] args) {
         ArrayList<Game> list = new ArrayList<Game>();
-        String path = "/tmp/games.csv";
+        String path = "AEDS/AEDS2/src/exercicios/games.csv";
         try(BufferedReader scanf = new BufferedReader(new FileReader(path))){
             String line = scanf.readLine();
             line = scanf.readLine();
@@ -100,6 +113,7 @@ public class Main{
                 list.add(game);
                 line = scanf.readLine();
             }
+            
             
             
         }catch (Exception e){
@@ -114,14 +128,11 @@ public class Main{
             try (Scanner scanf = new Scanner(System.in)) {
                 String line = scanf.nextLine();
                 while (!line.equals("FIM")){
-                    int id = Integer.parseInt(line);
-                    Game g = buscarPorId(list,id);
-                    if (g !=null){
-                        g.imprimir();
+                 if(buscarPorNome(list,line)){
                         System.out.println("SIM");
-                    }else{
+                 }else{
                         System.out.println("NAO");
-                    }
+                 };
                     line = scanf.nextLine();
 
                 }
@@ -131,6 +142,5 @@ public class Main{
             System.out.println(e.getMessage());
         }
     }
+
 }
-
-
