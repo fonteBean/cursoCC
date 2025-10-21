@@ -41,7 +41,6 @@ public class Heap{
         }
         System.out.println();
     }
-
    public static void main(String[] args) {
         int[] vetor = new int[10];
         for(int i = 0; i < vetor.length; i++){
