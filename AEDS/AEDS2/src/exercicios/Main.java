@@ -117,7 +117,6 @@ public class Main{
                     int id = Integer.parseInt(line);
                     Game g = buscarPorId(list,id);
                     if (g !=null){
-                        g.imprimir();
                         System.out.println("SIM");
                     }else{
                         System.out.println("NAO");

@@ -122,6 +122,9 @@ public class Teste {
         try{
                     long inicio = System.nanoTime();
                     heapsort(list);
+                    for(Game g : list){
+                        System.out.println(g.getNome());
+                    }
                     long fim = System.nanoTime();
                     tempo = fim - inicio;
                     escreveLog();
