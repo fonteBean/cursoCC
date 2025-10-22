@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import exercicios.models.Game;
-public class Teste {
+public class Nome {
 
 
 
