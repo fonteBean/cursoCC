@@ -19,8 +19,8 @@ public class Owners {
     int dir = 2 * i + 2;
     if (esq < tam) {
         comparacoes++;
-        if (jogos[esq].getEstimedOwners() > jogos[raiz].getEstimedOwners() ||
-            (jogos[esq].getEstimedOwners() == jogos[raiz].getEstimedOwners() &&
+        if (jogos[esq].getId() > jogos[raiz].getId() ||
+            (jogos[esq].getId() == jogos[raiz].getId() &&
              jogos[esq].getId() > jogos[raiz].getId())) {
             raiz = esq;
         }
@@ -29,8 +29,8 @@ public class Owners {
 
     if (dir < tam) {
         comparacoes++;
-        if (jogos[dir].getEstimedOwners() > jogos[raiz].getEstimedOwners() ||
-            (jogos[dir].getEstimedOwners() == jogos[raiz].getEstimedOwners() &&
+        if (jogos[dir].getId() > jogos[raiz].getId() ||
+            (jogos[dir].getId() == jogos[raiz].getId() &&
              jogos[dir].getId() > jogos[raiz].getId())) {
             raiz = dir;
         }
@@ -61,9 +61,50 @@ public class Owners {
     }
 }
 
-    
-    
+    public static void criaHeapID(Game[] jogos, int tam, int i) {
+    int raiz = i;
+    int esq = 2 * i + 1;
+    int dir = 2 * i + 2;
+    if (esq < tam) {
+        comparacoes++;
+        if (jogos[esq].getId() > jogos[raiz].getId()) {
+            raiz = esq;
+        }
+    }
 
+
+    if (dir < tam) {
+        comparacoes++;
+        if (jogos[dir].getId() > jogos[raiz].getId()) {
+            raiz = dir;
+        }
+    }
+
+    if (raiz != i) {
+        movimentacoes += 3; 
+        Game aux = jogos[i];
+        jogos[i] = jogos[raiz];
+        jogos[raiz] = aux;
+        criaHeap(jogos, tam, raiz);
+    }
+}
+
+    public static void ordenaId(Game[] jogos, int tam) {
+
+    for (int i = tam / 2 - 1; i >= 0; i--) {
+        criaHeapID(jogos, tam, i);
+    }
+
+    for (int j = tam - 1; j > 0; j--) {
+        movimentacoes += 3;
+        Game aux = jogos[0];
+        jogos[0] = jogos[j];
+        jogos[j] = aux;
+
+        criaHeapID(jogos, j, 0);
+    }
+}
+    
    public static void escreveLog() {
     String path = "AEDS/AEDS2/src/exercicios/log.txt";
 
@@ -90,48 +131,58 @@ public class Owners {
     }
     return null;
 }
-    public static  void main(String[] args) {
-        Game[] list = new Game[10000000];
-        String path = "/tmp/games.csv";
-         int tam = 0;
-        try(BufferedReader scanf = new BufferedReader(new FileReader(path))){
+
+public static int leArquivo(Game[] jogos, String path) {
+    int tam =0;
+   try(BufferedReader scanf = new BufferedReader(new FileReader(path))){
+       
             String line = scanf.readLine();
             line = scanf.readLine();
             while (line != null){
                 Game game;
                 game = Game.fromCSV(line);
-                list[tam] = game;
+                jogos[tam] = game;
                 line = scanf.readLine();
                 tam++;
             }
-           
+          
             
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
-        try{
-                    long inicio = System.nanoTime();
-                    heapsort(list,tam);
-                    long fim = System.nanoTime();
-                    tempo = fim - inicio;
-                    escreveLog();
-            try (Scanner scanf = new Scanner(System.in)) {
+    return tam;
+}
+    public static  void main(String[] args) {
+        Game[] list = new Game[10000000];
+        String path = "/tmp/games.csv";
+        int tam = leArquivo(list, path);
+        ordenaId(list,tam);
+       
+        try (Scanner scanf = new Scanner(System.in)) {
                 String line = scanf.nextLine();
+                int tam2 = 0; // Tamanho do array de buscas
+                Game[] buscas = new Game[100000];
                 while (!line.equals("FIM")){
                     int id = Integer.parseInt(line);
                     Game g = buscarPorId(list,id,tam);
                     if (g !=null){
-                        System.out.println("SIM");
-                    }else{
-                        System.out.println("NAO");
+                        buscas[tam2] = g;
+                        tam2++;
                     }
                     line = scanf.nextLine();
-
                 }
-            }
-            
-        }catch (Exception e){
+                long inicio = System.nanoTime();
+                heapsort(buscas, tam2);
+                long fim = System.nanoTime();
+                tempo = fim - inicio;
+                escreveLog();
+                for (int i = 0; i < tam2; i++) {
+                    System.out.println(buscas[i].getNome() + " " + buscas[i].getEstimedOwners());;
+                }
+        }catch(Exception e){
             System.out.println(e.getMessage());
         }
+            
+       
     }
 }
