@@ -10,7 +10,7 @@ import exercicios.models.Game;
 public class Nome {
 
 
-
+    static int movimentacoes = 0;   
     static int comparacoes = 0;
     static long tempo;
 
@@ -70,6 +70,66 @@ public class Nome {
         }   
     }
     
+     public static void criaHeapID(Game[] jogos, int tam, int i) {
+    int raiz = i;
+    int esq = 2 * i + 1;
+    int dir = 2 * i + 2;
+    if (esq < tam) {
+        comparacoes++;
+        if (jogos[esq].getId() > jogos[raiz].getId()) {
+            raiz = esq;
+        }
+    }
+
+
+    if (dir < tam) {
+        comparacoes++;
+        if (jogos[dir].getId() > jogos[raiz].getId()) {
+            raiz = dir;
+        }
+    }
+
+    if (raiz != i) {
+        movimentacoes += 3; 
+        Game aux = jogos[i];
+        jogos[i] = jogos[raiz];
+        jogos[raiz] = aux;
+        criaHeap(jogos, tam, raiz);
+    }
+}
+
+    public static void ordenaId(Game[] jogos, int tam) {
+
+    for (int i = tam / 2 - 1; i >= 0; i--) {
+        criaHeapID(jogos, tam, i);
+    }
+
+    for (int j = tam - 1; j > 0; j--) {
+        movimentacoes += 3;
+        Game aux = jogos[0];
+        jogos[0] = jogos[j];
+        jogos[j] = aux;
+
+        criaHeapID(jogos, j, 0);
+    }
+}
+
+    public static Game buscarPorId(Game[] jogos, int id, int tam) {
+    int esq = 0;
+    int dir = tam - 1;
+    while (esq <= dir) {
+        int meio = esq + (dir - esq) / 2;
+        int meioID = jogos[meio].getId();
+        if (meioID == id) {
+            return jogos[meio];
+        } else if (meioID < id) {
+            esq = meio + 1;
+        } else {
+            dir = meio - 1;
+        }
+    }
+    return null;
+}
 
    public static void escreveLog() {
     String path = "AEDS/AEDS2/src/tps/src/tp05/log.txt";
@@ -121,7 +181,7 @@ public class Nome {
         Game[] list = new Game[100000];
         String path = "/tmp/games.csv";
         int tam = leArquivo(list, path);
-        
+        ordenaId(list, tam);
         long inicio = System.nanoTime();
         heapsort(list,tam);
         long fim = System.nanoTime();
