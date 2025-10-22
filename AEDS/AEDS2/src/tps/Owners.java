@@ -8,6 +8,7 @@ import java.util.Scanner;
 
 
 import exercicios.models.Game;
+
 public class Owners {
     static int movimentacoes = 0;
     static long tempo;
@@ -132,7 +133,7 @@ public class Owners {
     return null;
 }
 
-public static int leArquivo(Game[] jogos, String path) {
+    public static int leArquivo(Game[] jogos, String path) {
     int tam =0;
    try(BufferedReader scanf = new BufferedReader(new FileReader(path))){
        
