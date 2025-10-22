@@ -70,7 +70,7 @@ public class Nome {
         }   
     }
     
-     public static void criaHeapID(Game[] jogos, int tam, int i) {
+    public static void criaHeapID(Game[] jogos, int tam, int i) {
     int raiz = i;
     int esq = 2 * i + 1;
     int dir = 2 * i + 2;
@@ -94,7 +94,7 @@ public class Nome {
         Game aux = jogos[i];
         jogos[i] = jogos[raiz];
         jogos[raiz] = aux;
-        criaHeap(jogos, tam, raiz);
+        criaHeapID(jogos, tam, raiz);
     }
 }
 
@@ -114,21 +114,21 @@ public class Nome {
     }
 }
 
-    public static Game buscarPorId(Game[] jogos, int id, int tam) {
+    public static boolean buscarPorId(Game[] jogos, int id, int tam) {
     int esq = 0;
     int dir = tam - 1;
     while (esq <= dir) {
         int meio = esq + (dir - esq) / 2;
         int meioID = jogos[meio].getId();
         if (meioID == id) {
-            return jogos[meio];
+            return true;
         } else if (meioID < id) {
             esq = meio + 1;
         } else {
             dir = meio - 1;
         }
     }
-    return null;
+    return false;
 }
 
    public static void escreveLog() {
@@ -181,7 +181,25 @@ public class Nome {
         Game[] list = new Game[100000];
         String path = "/tmp/games.csv";
         int tam = leArquivo(list, path);
+        //ordena por id
         ordenaId(list, tam);
+        try (Scanner scanf = new Scanner(System.in)) {
+                String line = scanf.nextLine();
+                while (!line.equals("FIM")){
+                int id = Integer.parseInt(line);
+                 if(buscarPorId(list,id,tam)){
+                        System.out.println("SIM");
+                 }else{
+                        System.out.println("NAO");
+                 }
+                    line = scanf.nextLine();
+
+                }
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+
+        //ordena por nome
         long inicio = System.nanoTime();
         heapsort(list,tam);
         long fim = System.nanoTime();

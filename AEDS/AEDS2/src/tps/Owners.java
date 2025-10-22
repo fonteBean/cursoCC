@@ -86,7 +86,7 @@ public class Owners {
         Game aux = jogos[i];
         jogos[i] = jogos[raiz];
         jogos[raiz] = aux;
-        criaHeap(jogos, tam, raiz);
+        criaHeapID(jogos, tam, raiz);
     }
 }
 
@@ -157,8 +157,9 @@ public class Owners {
         Game[] list = new Game[10000000];
         String path = "/tmp/games.csv";
         int tam = leArquivo(list, path);
+
+        //ordena por id
         ordenaId(list,tam);
-       
         try (Scanner scanf = new Scanner(System.in)) {
                 String line = scanf.nextLine();
                 int tam2 = 0; // Tamanho do array de buscas
@@ -172,6 +173,7 @@ public class Owners {
                     }
                     line = scanf.nextLine();
                 }
+                //ordena por owners
                 long inicio = System.nanoTime();
                 heapsort(buscas, tam2);
                 long fim = System.nanoTime();
