@@ -70,65 +70,15 @@ public class Nome {
         }   
     }
     
-    public static void criaHeapID(Game[] jogos, int tam, int i) {
-    int raiz = i;
-    int esq = 2 * i + 1;
-    int dir = 2 * i + 2;
-    if (esq < tam) {
-        comparacoes++;
-        if (jogos[esq].getId() > jogos[raiz].getId()) {
-            raiz = esq;
+
+    public static Game buscarPorId(Game[] jogos, int id, int tam) {
+        for(Game g : jogos){
+            comparacoes++;
+            if(g.getId() == id){
+                return g;
+            }
         }
-    }
-
-
-    if (dir < tam) {
-        comparacoes++;
-        if (jogos[dir].getId() > jogos[raiz].getId()) {
-            raiz = dir;
-        }
-    }
-
-    if (raiz != i) {
-        movimentacoes += 3; 
-        Game aux = jogos[i];
-        jogos[i] = jogos[raiz];
-        jogos[raiz] = aux;
-        criaHeapID(jogos, tam, raiz);
-    }
-}
-
-    public static void ordenaId(Game[] jogos, int tam) {
-
-    for (int i = tam / 2 - 1; i >= 0; i--) {
-        criaHeapID(jogos, tam, i);
-    }
-
-    for (int j = tam - 1; j > 0; j--) {
-        movimentacoes += 3;
-        Game aux = jogos[0];
-        jogos[0] = jogos[j];
-        jogos[j] = aux;
-
-        criaHeapID(jogos, j, 0);
-    }
-}
-
-    public static boolean buscarPorId(Game[] jogos, int id, int tam) {
-    int esq = 0;
-    int dir = tam - 1;
-    while (esq <= dir) {
-        int meio = esq + (dir - esq) / 2;
-        int meioID = jogos[meio].getId();
-        if (meioID == id) {
-            return true;
-        } else if (meioID < id) {
-            esq = meio + 1;
-        } else {
-            dir = meio - 1;
-        }
-    }
-    return false;
+        return null;
 }
 
    public static void escreveLog() {
@@ -141,21 +91,21 @@ public class Nome {
     }
 }
 
-    public static boolean buscarPorNome(Game[] jogos, String nome,int tam) {
+    public static Game buscarPorNome(Game[] buscas, String nome,int tam) {
     int esq = 0;
     int dir = tam - 1;
     while (esq <= dir) {
         int meio = esq + (dir - esq) / 2;
-        String meioNome = jogos[meio].getNome();
+        String meioNome = buscas[meio].getNome();
         if (meioNome.equals(nome)) {
-            return true;
+            return buscas[meio];
         } else if (comparaNomes(meioNome, nome) < 0 ) {
             esq = meio + 1;
         } else {
             dir = meio - 1;
         }
     }
-    return false;
+    return null;
     }
     
     public static int leCsv(Game[] jogos, String path) {
@@ -180,37 +130,24 @@ public class Nome {
      public static  void main(String[] args) {
         Game[] list = new Game[100000];
         String path = "/tmp/games.csv";
-        int tam = leCsv(list, path);
-        //ordena por id
-        // ordenaId(list, tam);
+        int tam = leCsv(list, path);// retorna tam csv
 
-        // try (Scanner scanf = new Scanner(System.in)) {
-        //         String line = scanf.nextLine();
-        //         while (!line.equals("FIM")){
-        //         int id = Integer.parseInt(line);
-        //          if(buscarPorId(list,id,tam)){
-        //                 // System.out.println("SIM");
-        //          }else{
-        //                 // System.out.println("NAO");
-        //          }
-        //             line = scanf.nextLine();
 
-        //         }
-        // }catch(Exception e){
-        //     System.out.println(e.getMessage());
-        // }
+        int tamBusca = 0;//tamanho do array de buscas
 
-        //ordena por nome
-        long inicio = System.nanoTime();
-        heapsort(list,tam);
-        long fim = System.nanoTime();
-        tempo = fim - inicio;
-        escreveLog();
-        try (Scanner scanf = new Scanner(System.in)) {
+        Game[] buscas = new Game[tam];
+        //leitura dos ids
+        Scanner scanf = new Scanner(System.in);
+        try{
                 String line = scanf.nextLine();
                 while (!line.equals("FIM")){
-                 if(buscarPorNome(list,line,tam)){
+                int id = Integer.parseInt(line);
+                Game g = buscarPorId(list,id,tam);
+                 if(g != null){
+                        buscas[tamBusca] = g;
+                        tamBusca++;
                         System.out.println("SIM");
+                        System.out.println(g.getNome());
                  }else{
                         System.out.println("NAO");
                  }
@@ -220,6 +157,31 @@ public class Nome {
         }catch(Exception e){
             System.out.println(e.getMessage());
         }
-    }
 
+        //ordena por nome
+        long inicio = System.nanoTime();
+        heapsort(buscas,tamBusca);
+        long fim = System.nanoTime();
+        tempo = fim - inicio;
+        escreveLog();
+
+        //busca por nome
+        try{
+            String line;   
+            do{
+                    line = scanf.nextLine();
+                    Game g=  buscarPorNome(buscas,line,tamBusca);
+                    if(g != null){
+                            g.imprimir();
+                    }else{
+                            System.out.println("NOT FOUND");
+                    }
+                }while (!line.equals("FIM"));
+               
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+
+        scanf.close();
+    }
 }

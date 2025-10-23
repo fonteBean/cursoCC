@@ -62,66 +62,12 @@ public class Preco {
             k++;
         }
     }
-    
-
-     public static void criaHeapID(Game[] jogos, int tam, int i) {
-    int raiz = i;
-    int esq = 2 * i + 1;
-    int dir = 2 * i + 2;
-    if (esq < tam) {
-        comparacoes++;
-        if (jogos[esq].getId() > jogos[raiz].getId()) {
-            raiz = esq;
-        }
-    }
 
 
-    if (dir < tam) {
-        comparacoes++;
-        if (jogos[dir].getId() > jogos[raiz].getId()) {
-            raiz = dir;
-        }
-    }
-
-    if (raiz != i) {
-        movimentacoes += 3; 
-        Game aux = jogos[i];
-        jogos[i] = jogos[raiz];
-        jogos[raiz] = aux;
-        criaHeapID(jogos, tam, raiz);
-    }
-}
-
-    public static void ordenaId(Game[] jogos, int tam) {
-
-    for (int i = tam / 2 - 1; i >= 0; i--) {
-        criaHeapID(jogos, tam, i);
-    }
-
-    for (int j = tam - 1; j > 0; j--) {
-        movimentacoes += 3;
-        Game aux = jogos[0];
-        jogos[0] = jogos[j];
-        jogos[j] = aux;
-
-        criaHeapID(jogos, j, 0);
-    }
-}
-
-
-
-    public static Game buscarPorId(Game[] jogos, int id, int tam) {
-    int esq = 0;
-    int dir = tam - 1;
-    while (esq <= dir) {
-        int meio = esq + (dir - esq) / 2;
-        int meioID = jogos[meio].getId();
-        if (meioID == id) {
-            return jogos[meio];
-        } else if (meioID < id) {
-            esq = meio + 1;
-        } else {
-            dir = meio - 1;
+    public static Game buscarPorId(Game[] jogos, int id) {
+    for(Game g: jogos){
+        if (g.getId() == id) {
+            return g;
         }
     }
     return null;
@@ -136,10 +82,10 @@ public class Preco {
         System.err.println("Erro ao escrever o log: " + e.getMessage());
     }
 }    
-    public static int leCsv(Game[] jogos, String path) {
-        int tam =0;
-         try(BufferedReader scanf = new BufferedReader(new FileReader(path))){
+    public static void leCsv(Game[] jogos, String path) {
        
+         try(BufferedReader scanf = new BufferedReader(new FileReader(path))){
+            int tam =0;
             String line = scanf.readLine();
             line = scanf.readLine();
             while (line != null){
@@ -152,7 +98,7 @@ public class Preco {
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
-    return tam;
+    return;
 }
   
     public static void imprimePreco(Game[] list,int tam){
@@ -163,16 +109,14 @@ public class Preco {
      public static  void main(String[] args) {
         Game[] list = new Game[100000];
         String path = "/tmp/games.csv";
-        int tamCsv = leCsv(list, path);
-        ordenaId(list, tamCsv); // organiza para a pesquisa de id
-       
+        leCsv(list, path);
         try (Scanner scanf = new Scanner(System.in)) {
                 Game[] buscas = new Game[100000];
                 String line = scanf.nextLine();
                 int tamBuscas = 0;
                 while (!line.equals("FIM")){
                     int id = Integer.parseInt(line);
-                    Game g = buscarPorId(list, id, tamCsv);
+                    Game g = buscarPorId(list, id);
                     if (g == null) {
                      System.out.println("Not Found");
                     }else{
@@ -181,14 +125,12 @@ public class Preco {
                     }
                     line = scanf.nextLine();
                 }
-
                 long inicio = System.nanoTime();
                 mergeSort(buscas,0, tamBuscas-1); // organiza para buscar
                 long fim = System.nanoTime();
                 tempo = fim - inicio;
                 escreveLog();
                 imprimePreco(buscas, tamBuscas-1);
-
         }catch(Exception e){
             System.out.println(e.getMessage());
         }
