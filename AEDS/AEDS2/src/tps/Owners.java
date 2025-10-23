@@ -160,24 +160,24 @@ public class Owners {
         ordenaId(list,tam);
         try (Scanner scanf = new Scanner(System.in)) {
                 String line = scanf.nextLine();
-                int tam2 = 0; // Tamanho do array de buscas
+                int tamBusca = 0; // Tamanho do array de buscas
                 Game[] buscas = new Game[100000];
                 while (!line.equals("FIM")){
                     int id = Integer.parseInt(line);
                     Game g = buscarPorId(buscas, id, tam);
                     if (g !=null){
-                        buscas[tam2] = g;
-                        tam2++;
+                        buscas[tamBusca] = g;
+                        tamBusca++;
                     }
                     line = scanf.nextLine();
                 }
                 //ordena por owners
                 long inicio = System.nanoTime();
-                heapsort(buscas, tam2);
+                heapsort(buscas, tamBusca);
                 long fim = System.nanoTime();
                 tempo = fim - inicio;
                 escreveLog();
-                for (int i = 0; i < tam2; i++) {
+                for (int i = 0; i < tamBusca; i++) {
                     System.out.println(buscas[i].getNome() + " " + buscas[i].getEstimedOwners());;
                 }
         }catch(Exception e){

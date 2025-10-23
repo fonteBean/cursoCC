@@ -63,6 +63,53 @@ public class Preco {
         }
     }
     
+
+     public static void criaHeapID(Game[] jogos, int tam, int i) {
+    int raiz = i;
+    int esq = 2 * i + 1;
+    int dir = 2 * i + 2;
+    if (esq < tam) {
+        comparacoes++;
+        if (jogos[esq].getId() > jogos[raiz].getId()) {
+            raiz = esq;
+        }
+    }
+
+
+    if (dir < tam) {
+        comparacoes++;
+        if (jogos[dir].getId() > jogos[raiz].getId()) {
+            raiz = dir;
+        }
+    }
+
+    if (raiz != i) {
+        movimentacoes += 3; 
+        Game aux = jogos[i];
+        jogos[i] = jogos[raiz];
+        jogos[raiz] = aux;
+        criaHeapID(jogos, tam, raiz);
+    }
+}
+
+    public static void ordenaId(Game[] jogos, int tam) {
+
+    for (int i = tam / 2 - 1; i >= 0; i--) {
+        criaHeapID(jogos, tam, i);
+    }
+
+    for (int j = tam - 1; j > 0; j--) {
+        movimentacoes += 3;
+        Game aux = jogos[0];
+        jogos[0] = jogos[j];
+        jogos[j] = aux;
+
+        criaHeapID(jogos, j, 0);
+    }
+}
+
+
+
     public static Game buscarPorId(Game[] jogos, int id, int tam) {
     int esq = 0;
     int dir = tam - 1;
@@ -109,41 +156,39 @@ public class Preco {
 }
   
     public static void imprimePreco(Game[] list,int tam){
-
-        System.out.println("| 5 mais caros | ");
-        for(int i =0; i< tam; i++){
-            list[i].imprimir();
-        }
-        System.out.println("| 5 mais baratos | ");
-        for(int i = tam-1; i >=0 ; i--){
-            list[i].imprimir();
-        }
+        System.out.println(list[0].getNome() + " " +list[0].getPrice());
+        System.out.println(list[tam].getNome() + " " + list[tam].getPrice());
 
     }
      public static  void main(String[] args) {
         Game[] list = new Game[100000];
         String path = "/tmp/games.csv";
         int tamCsv = leCsv(list, path);
-
-        long inicio = System.nanoTime();
-        mergeSort(list,0, tamCsv); // trocar pelo merge
-        long fim = System.nanoTime();
-        tempo = fim - inicio;
-        escreveLog();
-        Game[] buscas = new Game[100000];
+        ordenaId(list, tamCsv); // organiza para a pesquisa de id
+       
         try (Scanner scanf = new Scanner(System.in)) {
+                Game[] buscas = new Game[100000];
                 String line = scanf.nextLine();
                 int tamBuscas = 0;
                 while (!line.equals("FIM")){
                     int id = Integer.parseInt(line);
                     Game g = buscarPorId(list, id, tamCsv);
-                    if (g != null) {
+                    if (g == null) {
+                     System.out.println("Not Found");
+                    }else{
                         buscas[tamBuscas] = g;
                         tamBuscas++;
                     }
                     line = scanf.nextLine();
                 }
-                imprimePreco(list, tamBuscas);
+
+                long inicio = System.nanoTime();
+                mergeSort(buscas,0, tamBuscas-1); // organiza para buscar
+                long fim = System.nanoTime();
+                tempo = fim - inicio;
+                escreveLog();
+                imprimePreco(buscas, tamBuscas-1);
+
         }catch(Exception e){
             System.out.println(e.getMessage());
         }
