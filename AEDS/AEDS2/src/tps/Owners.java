@@ -11,9 +11,10 @@ import java.util.Scanner;
 import exercicios.models.Game;
 
 public class Owners {
+
    static int movimentacoes = 0;
-    static long tempo;
-    static int comparacoes = 0;
+   static long tempo;
+   static int comparacoes = 0;
 
     public static void criaHeap(Game[] jogos, int tam, int i) {
         int raiz = i;
@@ -82,7 +83,7 @@ public class Owners {
         return null;
     }
 
-    public static int leArquivo(Game[] jogos, String path) {
+    public static void leArquivo(Game[] jogos, String path) {
         int tam = 0;
         try (BufferedReader scanf = new BufferedReader(new FileReader(path))) {
             scanf.readLine(); 
@@ -94,13 +95,13 @@ public class Owners {
         } catch (Exception e) {
             System.out.println("Erro ao ler arquivo: " + e.getMessage());
         }
-        return tam; 
+        return; 
     }
 
     public static void main(String[] args) {
         Game[] list = new Game[10000000];
         String path = "/tmp/games.csv";
-        int tam = leArquivo(list, path); // pega tamanho real
+        leArquivo(list, path);
 
         try (Scanner scanf = new Scanner(System.in)) {
             String line = scanf.nextLine();
@@ -131,4 +132,5 @@ public class Owners {
         }
     
     }
+
 }
