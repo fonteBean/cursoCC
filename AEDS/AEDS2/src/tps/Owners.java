@@ -145,9 +145,7 @@ public class Owners {
                 jogos[tam] = game;
                 line = scanf.readLine();
                 tam++;
-            }
-          
-            
+            }  
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
@@ -166,7 +164,7 @@ public class Owners {
                 Game[] buscas = new Game[100000];
                 while (!line.equals("FIM")){
                     int id = Integer.parseInt(line);
-                    Game g = buscarPorId(list,id,tam);
+                    Game g = buscarPorId(buscas, id, tam);
                     if (g !=null){
                         buscas[tam2] = g;
                         tam2++;

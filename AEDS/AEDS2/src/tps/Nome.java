@@ -158,7 +158,7 @@ public class Nome {
     return false;
     }
     
-    public static int leArquivo(Game[] jogos, String path) {
+    public static int leCsv(Game[] jogos, String path) {
     int tam =0;
    try(BufferedReader scanf = new BufferedReader(new FileReader(path))){
        
@@ -180,24 +180,25 @@ public class Nome {
      public static  void main(String[] args) {
         Game[] list = new Game[100000];
         String path = "/tmp/games.csv";
-        int tam = leArquivo(list, path);
+        int tam = leCsv(list, path);
         //ordena por id
-        ordenaId(list, tam);
-        try (Scanner scanf = new Scanner(System.in)) {
-                String line = scanf.nextLine();
-                while (!line.equals("FIM")){
-                int id = Integer.parseInt(line);
-                 if(buscarPorId(list,id,tam)){
-                        System.out.println("SIM");
-                 }else{
-                        System.out.println("NAO");
-                 }
-                    line = scanf.nextLine();
+        // ordenaId(list, tam);
 
-                }
-        }catch(Exception e){
-            System.out.println(e.getMessage());
-        }
+        // try (Scanner scanf = new Scanner(System.in)) {
+        //         String line = scanf.nextLine();
+        //         while (!line.equals("FIM")){
+        //         int id = Integer.parseInt(line);
+        //          if(buscarPorId(list,id,tam)){
+        //                 // System.out.println("SIM");
+        //          }else{
+        //                 // System.out.println("NAO");
+        //          }
+        //             line = scanf.nextLine();
+
+        //         }
+        // }catch(Exception e){
+        //     System.out.println(e.getMessage());
+        // }
 
         //ordena por nome
         long inicio = System.nanoTime();
