@@ -1,6 +1,7 @@
 package tps;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -82,7 +83,7 @@ public class Nome {
 }
 
    public static void escreveLog() {
-    String path = "AEDS/AEDS2/src/tps/src/tp05/log.txt";
+    String path = System.getProperty("user.dir") + File.separator + "log.txt"; // cria no diretório atual
 
     try (FileWriter escritor = new FileWriter(path,true)) { 
         escritor.write("889080\t" + "Tempo de execução = " + tempo + "ms\tNumero de Comparacoes = " + comparacoes);

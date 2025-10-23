@@ -1,6 +1,7 @@
 package tps;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -10,35 +11,31 @@ import java.util.Scanner;
 import exercicios.models.Game;
 
 public class Owners {
-    static int movimentacoes = 0;
+   static int movimentacoes = 0;
     static long tempo;
     static int comparacoes = 0;
-    
-   public static void criaHeap(Game[] jogos, int tam, int i) {
+
+public static void criaHeap(Game[] jogos, int tam, int i) {
     int raiz = i;
     int esq = 2 * i + 1;
     int dir = 2 * i + 2;
+
     if (esq < tam) {
         comparacoes++;
-        if (jogos[esq].getId() > jogos[raiz].getId() ||
-            (jogos[esq].getId() == jogos[raiz].getId() &&
-             jogos[esq].getId() > jogos[raiz].getId())) {
+        if (jogos[esq].getId() > jogos[raiz].getId()) {
             raiz = esq;
         }
     }
 
-
     if (dir < tam) {
         comparacoes++;
-        if (jogos[dir].getId() > jogos[raiz].getId() ||
-            (jogos[dir].getId() == jogos[raiz].getId() &&
-             jogos[dir].getId() > jogos[raiz].getId())) {
+        if (jogos[dir].getId() > jogos[raiz].getId()) {
             raiz = dir;
         }
     }
 
     if (raiz != i) {
-        movimentacoes += 3; 
+        movimentacoes++; 
         Game aux = jogos[i];
         jogos[i] = jogos[raiz];
         jogos[raiz] = aux;
@@ -46,14 +43,14 @@ public class Owners {
     }
 }
 
-    public static void heapsort(Game[] jogos, int tam) {
-
+public static void heapsort(Game[] jogos, int tam) {
+    
     for (int i = tam / 2 - 1; i >= 0; i--) {
         criaHeap(jogos, tam, i);
     }
 
     for (int j = tam - 1; j > 0; j--) {
-        movimentacoes += 3;
+        movimentacoes += 3; 
         Game aux = jogos[0];
         jogos[0] = jogos[j];
         jogos[j] = aux;
@@ -61,13 +58,15 @@ public class Owners {
         criaHeap(jogos, j, 0);
     }
 }
+
     
    public static void escreveLog() {
-    String path = "AEDS/AEDS2/src/exercicios/log.txt";
+    String path = System.getProperty("user.dir") + File.separator + "log.txt"; 
 
     try (FileWriter escritor = new FileWriter(path)) { 
-        escritor.write("889080\t" + "Tempo de execução = " + tempo + "ms\tNumero de Comparacoes = " + comparacoes);
-    } catch (IOException e) {
+    escritor.write("889080\tTempo de execução = " + tempo + "ms\t" 
+                            + "Número de Comparações = " + movimentacoes + "\t"
+                            + "Número de Movimentações = " + comparacoes + "\n");    } catch (IOException e) {
         System.err.println("Erro ao escrever o log: " + e.getMessage());
     }
 }
