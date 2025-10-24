@@ -23,23 +23,23 @@ typedef struct {
 
 
 
-void freeList(char*** lista, int* qtd) {
-    if (*lista) {
-        for (int i = 0; i < *qtd; i++) free((*lista)[i]);
-        free(*lista);
+void freeVec(char*** vector, int* qtd) {
+    if (*vector) {
+        for (int i = 0; i < *qtd; i++) free((*vector)[i]);
+        free(*vector);
     }
-    *lista = NULL;
+    *vector = NULL;
     *qtd = 0;
 }
 void freeGame(Game* j) {
     free(j->name);
     free(j->releaseDae);
-    freeList(&j->supportedLanguages, &j->qtdsupportedLanguages);
-    freeList(&j->publishers, &j->qtdPublishers);
-    freeList(&j->developers, &j->qtdDevelopers);
-    freeList(&j->categories, &j->qtdCategories);
-    freeList(&j->genres, &j->qtdGenres);
-    freeList(&j->tags, &j->qtdTags);
+    freeVec(&j->supportedLanguages, &j->qtdsupportedLanguages);
+    freeVec(&j->publishers, &j->qtdPublishers);
+    freeVec(&j->developers, &j->qtdDevelopers);
+    freeVec(&j->categories, &j->qtdCategories);
+    freeVec(&j->genres, &j->qtdGenres);
+    freeVec(&j->tags, &j->qtdTags);
 }
 
 
@@ -94,28 +94,27 @@ char** separeTxt(const char* texto, const char* delim, int* qtd) {
     if (!texto || !*texto) return NULL;
     char* copia = copiarTexto(texto);
     char* token = strtok(copia, delim);
-    char** lista = NULL;
+    char** vector = NULL;
 
     while (token) {
         char* p = token;
         pularEspacos(&p);
         trim(p);
         if (*p) {
-            lista = realloc(lista, sizeof(char*) * (*qtd + 1));
-            lista[*qtd] = copiarTexto(p);
+            vector = realloc(vector, sizeof(char*) * (*qtd + 1));
+            vector[*qtd] = copiarTexto(p);
             (*qtd)++;
         }
         token = strtok(NULL, delim);
     }
     free(copia);
-    return lista;
+    return vector;
 }
 
-
-void printList(char** lista, int qtd) {
+void printvector(char** vector, int qtd) {
     printf("[");
     for (int i = 0; i < qtd; i++) {
-        printf("%s%s", lista[i], (i == qtd - 1) ? "" : ", ");
+        printf("%s%s", vector[i], (i == qtd - 1) ? "" : ", ");
     }
     printf("]");
 }
@@ -124,21 +123,19 @@ void printGame(const Game* j) {
     printf("=> %d ## %s ## %s ## %d ## %.2f ## ",j->id, 
         j->name, j->releaseDae, j->estimedOwners, j->price);
 
-    printList(j->supportedLanguages, j->qtdsupportedLanguages);
+    printvector(j->supportedLanguages, j->qtdsupportedLanguages);
     printf(" ## %d ## %.1f ## %d ## ", j->metacriticScore, j->userScore, j->achiviments);
-    printList(j->publishers, j->qtdPublishers);
+    printvector(j->publishers, j->qtdPublishers);
     printf(" ## ");
-    printList(j->developers, j->qtdDevelopers);
+    printvector(j->developers, j->qtdDevelopers);
     printf(" ## ");
-    printList(j->categories, j->qtdCategories);
+    printvector(j->categories, j->qtdCategories);
     printf(" ## ");
-    printList(j->genres, j->qtdGenres);
+    printvector(j->genres, j->qtdGenres);
     printf(" ## ");
-    printList(j->tags, j->qtdTags);
+    printvector(j->tags, j->qtdTags);
     printf(" ##\n");
 }
-
-
 
 char* dataFudida(const char* dataCsv) {
     char tmp[TAMFIELD];
@@ -265,12 +262,16 @@ void gameFromCsv(Game* j, const char* row) {
 }
 
 
-int main() {
+Game* leJogos(int *qtd) {
     setlocale(LC_NUMERIC, "C"); 
-    const char* path =  "/tmp/games.csv";
 
-    FILE* fr = fopen(path, "r");
-    if (!fr) { perror("Error ao abri/tmp/games.csv"); return 1; }
+    const char *path = "/tmp/games.csv";
+    FILE *fr = fopen(path, "r");
+    if (!fr) {
+        perror("Erro ao abrir /tmp/games.csv");
+        *qtd = 0;
+        return NULL;
+    }
 
     char row[TAMROW];
     int total = 0;
@@ -280,21 +281,43 @@ int main() {
     }
     fclose(fr);
 
-    Game* Games = (Game*) malloc(sizeof(Game) * (total > 0 ? total : 1));
-    int i = 0;
+    Game *games = (Game*) malloc(sizeof(Game) * (total > 0 ? total : 1));
+    if (!games) {
+        perror("Erro ao alocar memória para jogos");
+        *qtd = 0;
+        return NULL;
+    }
 
     fr = fopen(path, "r");
-    if (!fr) { perror("Error ao abri/tmp/games.csv"); free(Games); return 1; }
+    if (!fr) {
+        perror("Erro ao reabrir /tmp/games.csv");
+        free(games);
+        *qtd = 0;
+        return NULL;
+    }
 
-    fgets(row, sizeof(row), fr);
+    int i = 0;
+    fgets(row, sizeof(row), fr); 
+
     while (fgets(row, sizeof(row), fr)) {
-        row[strcspn(row, "\r\n")] = 0;
+        row[strcspn(row, "\r\n")] = 0; 
         if (i < total) {
-            gameFromCsv(&Games[i], row);
+            gameFromCsv(&games[i], row);
             i++;
         }
     }
+
     fclose(fr);
+
+    *qtd = i;
+    return games;
+}
+
+
+int main() {
+    int total = 0;
+    Game *Games = leJogos(&total);
+    if (!Games) return 1;
 
     char entrada[TAMFIELD];
     while (fgets(entrada, sizeof(entrada), stdin)) {
@@ -303,7 +326,7 @@ int main() {
         if (strcmp(entrada, "FIM") == 0) break;
 
         int id = atoi(entrada);
-        for (int k = 0; k < i; k++) {
+        for (int k = 0; k < total; k++) {
             if (Games[k].id == id) {
                 printGame(&Games[k]);
                 break;
@@ -311,7 +334,10 @@ int main() {
         }
     }
 
-    for (int k = 0; k < i; k++) freeGame(&Games[k]);
+    for (int k = 0; k < total; k++)
+        freeGame(&Games[k]);
+
     free(Games);
     return 0;
 }
+
