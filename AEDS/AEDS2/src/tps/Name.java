@@ -350,15 +350,15 @@ public class Name {
         return null;
 }
 
-   public static void escreveLog() {
-    String path = System.getProperty("user.dir") + File.separator + "889080_binaria.txt"; 
+    public static void escreveLog() {
+        String path = System.getProperty("user.dir") + File.separator + "889080_binaria.txt"; 
 
-    try (FileWriter escritor = new FileWriter(path,true)) { 
-        escritor.write("889080\t" + "Tempo de execução = " + tempo + "ms\tNumero de Comparacoes = " + comparacoes);
-    } catch (IOException e) {
-        System.err.println("Erro ao escrever o log: " + e.getMessage());
+        try (FileWriter escritor = new FileWriter(path,true)) { 
+            escritor.write("889080\t" + "Tempo de execução = " + tempo + "ms\tNumero de Comparacoes = " + comparacoes);
+        } catch (IOException e) {
+            System.err.println("Erro ao escrever o log: " + e.getMessage());
+        }
     }
-}
 
     public static Game buscarPorNome(Game[] buscas, String nome,int tam) {
     int esq = 0;
