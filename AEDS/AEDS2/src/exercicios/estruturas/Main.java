@@ -1,18 +1,21 @@
 package exercicios.estruturas;
 
 import exercicios.estruturas.fila.Fila;
+import exercicios.estruturas.lista.Lista;
 
 public class Main {
 
   public static void main(String args[]) throws Exception {
     Fila fila = new Fila();
-    fila.inserir(5);
-    fila.inserir(4);
 
-    fila.inserir(1);
-    fila.inserir(10);
-    // fila.inverte();
-    fila.mostrar();
+    Lista lista = new Lista();
+    lista.inserirNoInicio(5);
+    lista.inserirNoInicio(4);
+    lista.inserirNoInicio(8);
+    lista.inserirNoInicio(10);
+    lista.remover(3);
+    lista.mostrar();
+
   }
 
 }

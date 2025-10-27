@@ -80,4 +80,33 @@ public class Fila {
 
   // }
 
+  public int parDiv5() {
+    return parDiv5(inicio.prox);
+  }
+
+  public int parDiv5(Celula i) {
+    int resp = 0;
+    if (i.prox == fim) {
+      resp = (i.prox.elemento % 2 == 0 && i.prox.elemento % 5 == 0) ? 1 : 0;
+      return resp;
+    }
+    if (i.elemento % 2 == 0 && i.elemento % 5 == 0)
+      resp = 1;
+    return resp + parDiv5(i.prox);
+  }
+
+  // public Celula toFila(Celula i) {
+  // Fila fila = new Fila();
+  // Celula ultimo;
+  // while (i != ultimo) {
+  // while (i.prox != null) {
+  // i = i.prox;
+  // }
+  // ultimo = i;
+  // fila.inserir(i.elemento);
+  // }
+
+  // return fila.inicio;
+
+  // }
 }
