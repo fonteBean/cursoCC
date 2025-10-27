@@ -1,5 +1,7 @@
 package exercicios.estruturas.lista;
 
+import java.io.EOFException;
+
 import exercicios.estruturas.Celula;
 
 public class Lista {
@@ -86,4 +88,20 @@ public class Lista {
     return e;
   }
 
+  // Parte dos exercicios
+
+  public int removeSegunda() throws Exception {
+    if (inicio.prox != null || inicio.prox.prox != null) {
+      throw new Exception();
+    }
+    Celula p = inicio.prox;
+    Celula q = p.prox;
+    int e = q.elemento;
+    p.prox = q.prox;
+    q.prox = null;
+    q = null;
+    return e;
+  }
+
+    
 }
