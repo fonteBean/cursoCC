@@ -230,7 +230,7 @@ public class Main {
       
   static int movimentacoes = 0;   
     static int comparacoes = 0;
-    static long tempo;  
+  static long tempo;  
 
     public static void mergeSort(Game[] vetor, int inicio, int fim) {
         if (inicio < fim) {
@@ -299,9 +299,6 @@ public class Main {
         movimentacoes++;
     }
 }
-
-
-
 
     public static Game buscarPorId(Game[] jogos, int id) {
     for(Game g: jogos){
