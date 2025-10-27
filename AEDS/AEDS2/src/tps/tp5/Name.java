@@ -1,5 +1,4 @@
-package tps;
-
+package tps.tp5;
 
 
 
@@ -12,7 +11,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 
-public class Main {
+public class Name {
 
     public static class Game {
         private int id;
@@ -227,162 +226,225 @@ public class Main {
             );
     }
 }   
+    
       
-  static int movimentacoes = 0;   
+    static int movimentacoes = 0;   
     static int comparacoes = 0;
-    static long tempo;  
+    static long tempo;
 
-    public static void mergeSort(Game[] vetor, int inicio, int fim) {
-        if (inicio < fim) {
-        int meio = (inicio + fim) / 2;
+    public static int comparaNomes(String a, String b) {
+        int len = Math.min(a.length(), b.length());
+        a = a.toLowerCase();
+        b = b.toLowerCase();
+        for (int i = 0; i < len; i++) {
+            char ca = a.charAt(i);
+            char cb = b.charAt(i);
 
-        mergeSort(vetor, inicio, meio);
-        mergeSort(vetor, meio + 1, fim);
-
-        merge(vetor, inicio, meio, fim);
-        }
-    }
-
-   public static void merge(Game[] vetor, int inicio, int meio, int fim) {
-    int n1 = meio - inicio + 1;
-    int n2 = fim - meio;
-
-    Game[] esq = new Game[n1];
-    Game[] dir = new Game[n2];
-
-    for (int i = 0; i < n1; i++) {
-        esq[i] = vetor[inicio + i];
-        movimentacoes++;
-    }
-    for (int j = 0; j < n2; j++) {
-        dir[j] = vetor[meio + 1 + j];
-        movimentacoes++;
-    }
-
-    int i = 0, j = 0, k = inicio;
-
-    while (i < n1 && j < n2) {
-        comparacoes++;
-
-        if (esq[i].getPrice() < dir[j].getPrice()) {
-            vetor[k] = esq[i];
-            i++;
-        } 
-        else if (esq[i].getPrice() == dir[j].getPrice()) {
-            if (esq[i].getId() <= dir[j].getId()) {
-                vetor[k] = esq[i];
-                i++;
-            } else {
-                vetor[k] = dir[j];
-                j++;
+            if (ca != cb) {
+                return ca - cb; 
             }
-        } 
-        else {
-            vetor[k] = dir[j];
-            j++;
         }
 
-        movimentacoes++;
-        k++;
-    }
-        while (i < n1) {
-        vetor[k] = esq[i];
-        i++;
-        k++;
-        movimentacoes++;
+        return a.length() - b.length();
+    }   
+
+     public static void criaHeapId(Game[] jogos, int tam, int i) {
+    int raiz = i;
+    int esq = 2 * i + 1;
+    int dir = 2 * i + 2;
+
+    if (esq < tam) {
+        comparacoes++;
+        if (jogos[esq].getId() > jogos[raiz].getId()){
+            raiz = esq;
+        }
     }
 
-    while (j < n2) {
-        vetor[k] = dir[j];
-        j++;
-        k++;
-        movimentacoes++;
+    if (dir < tam) {
+        comparacoes++;
+        if (jogos[dir].getId() > jogos[raiz].getId()) {
+            raiz = dir;
+        }
+    }
+
+    if (raiz != i) {
+        Game aux = jogos[i];
+        jogos[i] = jogos[raiz];
+        jogos[raiz] =  aux;
+        criaHeapId(jogos, tam, raiz);
     }
 }
+    
+    public static  void ordenaId(Game[] jogos, int tam)
+    {
+        for (int i= tam/2-1; i >=0; i--){
+            comparacoes++; 
+            criaHeapId(jogos,tam,i);
+        }
+        for (int j = tam-1;j>0;j--){
+            comparacoes++; 
+            Game aux = jogos[0];
+            jogos[0] = jogos[j];
+            jogos[j]= aux;
+            criaHeapId(jogos,j,0);
+        }   
+    }
 
 
+    public static void criaHeap(Game[] jogos, int tam, int i) {
+    int raiz = i;
+    int esq = 2 * i + 1;
+    int dir = 2 * i + 2;
 
-
-    public static Game buscarPorId(Game[] jogos, int id) {
-    for(Game g: jogos){
-        if (g.getId() == id) {
-            return g;
+    if (esq < tam) {
+        comparacoes++;
+        if (comparaNomes(jogos[esq].getNome(), jogos[raiz].getNome()) > 0) {
+            raiz = esq;
         }
     }
-    return null;
+
+    if (dir < tam) {
+        comparacoes++;
+        if (comparaNomes(jogos[dir].getNome(), jogos[raiz].getNome()) > 0) {
+            raiz = dir;
+        }
+    }
+
+    if (raiz != i) {
+        Game aux = jogos[i];
+        jogos[i] = jogos[raiz];
+        jogos[raiz] =  aux;
+        criaHeap(jogos, tam, raiz);
+    }
+}
+    public static  void heapsort(Game[] jogos, int tam)
+    {
+        for (int i= tam/2-1; i >=0; i--){
+            comparacoes++; 
+            criaHeap(jogos,tam,i);
+        }
+        for (int j = tam-1;j>0;j--){
+            comparacoes++; 
+            Game aux = jogos[0];
+            jogos[0] = jogos[j];
+            jogos[j]= aux;
+            criaHeap(jogos,j,0);
+        }   
+    }
+    
+
+    public static Game buscarPorId(Game[] jogos, int id, int tam) {
+        int esq = 0;
+        int dir = tam - 1;
+        while (esq <= dir) {
+            int meio = esq + (dir - esq) / 2;
+            int meioId = jogos[meio].getId();
+            if (meioId == id) {
+                return jogos[meio];
+            } else if (meioId < id ) {
+                esq = meio + 1;
+            } else {
+                dir = meio - 1;
+            }
+        }
+        return null;
 }
 
     public static void escreveLog() {
-        String path = System.getProperty("user.dir") + File.separator + "889080_mergesort.txt"; // cria no diretório atual
+        String path = System.getProperty("user.dir") + File.separator + "889080_binaria.txt"; 
 
-        try (FileWriter escritor = new FileWriter(path)) {
-            escritor.write("889080\tTempo de execução = " + tempo + "ms\t" 
-                            + "Número de Comparações = " + movimentacoes + "\t"
-                            + "Número de Movimentações = " + comparacoes + "\n");
+        try (FileWriter escritor = new FileWriter(path,true)) { 
+            escritor.write("889080\t" + "Tempo de execução = " + tempo + "ms\tNumero de Comparacoes = " + comparacoes);
         } catch (IOException e) {
             System.err.println("Erro ao escrever o log: " + e.getMessage());
         }
     }
-   
-    public static void leCsv(Game[] jogos, String path) {
-       
-         try(BufferedReader scanf = new BufferedReader(new FileReader(path))){
-            int tam =0;
-            String line = scanf.readLine();
-            line = scanf.readLine();
-            while (line != null){
-                Game game;
-                game = Game.fromCSV(line);
-                jogos[tam] = game;
-                line = scanf.readLine();
-                tam++;
-            }
-        }catch (Exception e){
-            System.out.println(e.getMessage());
+
+    public static Game buscarPorNome(Game[] buscas, String nome,int tam) {
+    int esq = 0;
+    int dir = tam - 1;
+    while (esq <= dir) {
+        int meio = esq + (dir - esq) / 2;
+        String meioNome = buscas[meio].getNome();
+        if (meioNome.equals(nome)) {
+            return buscas[meio];
+        } else if (comparaNomes(meioNome, nome) < 0 ) {
+            esq = meio + 1;
+        } else {
+            dir = meio - 1;
         }
-    return;
-}
-  
-    public static void imprimePreco(Game[] list,int tam){
-        System.out.println("| 5 preços mais caros |");
-        for(int i=tam;i>  tam-5;i--){
-             list[i].imprimir();
-        }
-        System.out.println();
-        System.out.println("| 5 preços mais baratos |");
-        for(int i=0;i <5;i++){
-            list[i].imprimir();
-        }
-      
-      
     }
+    return null;
+    }
+    
+    public static int leCsv(Game[] jogos, String path) {
+    int tam =0;
+    try(BufferedReader scanf = new BufferedReader(new FileReader(path))){
+        
+                String line = scanf.readLine();
+                line = scanf.readLine();
+                while (line != null){
+                    Game game;
+                    game = Game.fromCSV(line);
+                    jogos[tam] = game;
+                    line = scanf.readLine();
+                    tam++;
+                }
+            }catch (Exception e){
+                System.out.println(e.getMessage());
+            }
+        return tam;
+}
+   
      public static  void main(String[] args) {
         Game[] list = new Game[100000];
         String path = "/tmp/games.csv";
-        leCsv(list, path);
-        try (Scanner scanf = new Scanner(System.in)) {
-                Game[] buscas = new Game[100000];
+        int tam = leCsv(list, path);
+        ordenaId(list, tam);
+
+
+        int tamBusca = 0;
+        Game[] buscas = new Game[tam];
+        Scanner scanf = new Scanner(System.in);
+
+        try{
                 String line = scanf.nextLine();
-                int tamBuscas = 0;
                 while (!line.equals("FIM")){
                     int id = Integer.parseInt(line);
-                    Game g = buscarPorId(list, id);
-                    if (g == null) {
-                     System.out.println("Not Found");
-                    }else{
-                        buscas[tamBuscas] = g;
-                        tamBuscas++;
+                    Game g = buscarPorId(list,id,tam);
+                    if(g != null){  
+                            buscas[tamBusca] = g;
+                            tamBusca++;
                     }
-                    line = scanf.nextLine();
+                        line = scanf.nextLine();
                 }
-                long inicio = System.nanoTime();
-                mergeSort(buscas,0, tamBuscas-1); // organiza para buscar
-                long fim = System.nanoTime();
-                tempo = fim - inicio;
-                escreveLog();
-                imprimePreco(buscas, tamBuscas-1);
         }catch(Exception e){
             System.out.println(e.getMessage());
         }
+
+        long inicio = System.nanoTime();
+        heapsort(buscas,tamBusca);
+        long fim = System.nanoTime();
+        tempo = fim - inicio;
+        escreveLog();
+
+        try{
+            String line = scanf.nextLine();   
+            do{
+                    Game g=  buscarPorNome(buscas,line,tamBusca);
+                    if(g != null){
+                            System.out.println(" SIM");;
+                    }else{
+                            System.out.println(" NAO");
+                    }
+                    line = scanf.nextLine();
+                }while (!line.equals("FIM"));
+               
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+
+        scanf.close();
     }
+
 }
