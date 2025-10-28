@@ -14,6 +14,7 @@ public class Main {
     lista.inserirNoInicio(8);
     lista.inserirNoInicio(10);
     lista.remover(3);
+    lista.removerNoFim();
     lista.mostrar();
 
   }

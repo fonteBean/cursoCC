@@ -28,17 +28,33 @@ public class Main {
     return;
   }
 
-  public static void menu(String entrada) {
+  public static void menu(Lista jogos, String entrada) throws Exception {
     String[] splitted = entrada.split(" ");
+    String op = splitted[0];
     String nome = splitted[1];
-    String op = splitted[1];
+    System.out.println(nome + "  " + op);
     switch (op) {
-
       case "II":
-        // inserirNoInicio();
+        jogos.inserirNoInicio(nome);
+        break;
+      case "I*":
+        jogos.inserirNoInicio(nome);
+        break;
+      case "IF":
+        jogos.inserirNoFim(nome);
+        break;
+      case "RI":
+        jogos.removerNoInicio();
+        break;
+      case "R*":
+        jogos.remover(3);
+        break;
+      case "RF":
+        jogos.removerNoFim();
         break;
 
       default:
+        System.out.println("Escreva uma opção válida");
         break;
     }
 
@@ -47,10 +63,18 @@ public class Main {
   public static void main(String[] args) {
     Lista jogos = new Lista();
     String path = "/tmp/games.csv";
-    leCsv(jogos, path);
+    // leCsv(jogos, path);
+    jogos.inserirNoInicio("The last");
+    jogos.inserirNoInicio("xicrinha");
+    jogos.inserirNoInicio("sapeca");
     jogos.mostrar();
     try (Scanner scanf = new Scanner(System.in)) {
-      int n = scanf.nextInt(); // numero de entradas
+      String ni = scanf.nextLine();
+      int n = Integer.parseInt(ni);// numero de entradas
+      for (int i = 0; i < n; i++) {
+        menu(jogos, scanf.nextLine());
+      }
+      jogos.mostrar();
 
     } catch (Exception e) {
       System.out.println(e.getMessage());

@@ -1,5 +1,6 @@
 package tps.tp6;
 
+import exercicios.estruturas.Celula;
 import exercicios.models.Game;
 
 public class Lista {
@@ -28,6 +29,7 @@ public class Lista {
   public void inserirNoInicio(Game g) {
     g.prox = primeiro.prox;
     primeiro.prox = g;
+    g = null;
   }
 
   public void inserir(Game g, int pos) throws Exception {
@@ -45,6 +47,34 @@ public class Lista {
   public void inserirNoFim(Game g) {
     ultimo.prox = g;
     ultimo = g;
+    g = null;
+  }
+
+  public void inserirNoInicio(String nome) {
+    Game g = new Game(nome);
+    g.prox = primeiro.prox;
+    primeiro.prox = g;
+    g = null;
+  }
+
+  public void inserir(String nome, int pos) throws Exception {
+    if (pos > this.tam()) {
+      throw new Exception();
+    }
+    Game tmp = primeiro.prox;
+    for (int i = 0; i < pos; i++, tmp = tmp.prox)
+      ;
+    Game g = new Game(nome);
+    g.prox = tmp.prox;
+    tmp.prox = g;
+    tmp = null;
+  }
+
+  public void inserirNoFim(String nome) {
+    Game g = new Game(nome);
+    ultimo.prox = g;
+    ultimo = g;
+    g = null;
   }
 
   public String removerNoInicio() {
@@ -69,14 +99,13 @@ public class Lista {
   }
 
   public String removerNoFim() {
-
-    Game tmp = primeiro;
-    for (; tmp.prox != ultimo; tmp = tmp.prox)
+    Game i = primeiro;
+    for (; i.prox != ultimo; i = i.prox)
       ;
-    String nome = tmp.prox.getNome();
-    ultimo = tmp;
-    tmp.prox = tmp = null;
-    return nome;
+    String e = ultimo.getNome();
+    ultimo = i;
+    ultimo.prox = i = null;
+    return e;
   }
 
 }
