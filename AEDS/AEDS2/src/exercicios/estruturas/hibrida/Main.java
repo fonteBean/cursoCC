@@ -12,10 +12,6 @@ public class Main {
 		No no = new No('N');
 		no.inserir(cel0);
 		no.inserir(cel1);
-		boolean achou = no.buscaCpf(1402042779L);
-		if (achou)
-			System.out.println("Sim");
-
 		no.imprimirLista();
 	}
 }

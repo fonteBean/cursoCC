@@ -1,4 +1,4 @@
-package exercicios.estruturas.arvore;
+package exercicios.estruturas.arvore.java;
 
 public class No {
     int elemento;

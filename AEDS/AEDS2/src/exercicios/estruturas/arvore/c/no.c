@@ -1,17 +1,13 @@
-#include "No.h"
+#include "no.h"
 #include <stdio.h>
 #include <stdlib.h>
 
-No* novoNo(int elemento) {
-    No* no = (No*)malloc(sizeof(No));
-    no->elemento = elemento;
-    no->esquerda = NULL;
-    no->direita = NULL;
-    return no;
+No *novoNo(int elemento){
+	No* no = (No*) malloc(sizeof(No));
+	no->elemento = elemento;
+	no-> dir = NULL;
+	no->esq = NULL;
+	return no;
 }
 
 
-
-int main(){
-
-}
