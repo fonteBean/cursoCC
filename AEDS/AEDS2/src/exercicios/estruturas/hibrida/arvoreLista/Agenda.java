@@ -1,4 +1,4 @@
-package exercicios.estruturas.hibrida;
+package exercicios.estruturas.hibrida.arvoreLista;
 
 public class Agenda {
   No raiz;

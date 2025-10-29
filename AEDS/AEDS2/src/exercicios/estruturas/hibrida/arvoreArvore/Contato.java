@@ -1,4 +1,4 @@
-package exercicios.estruturas.hibrida;
+package exercicios.estruturas.hibrida.arvoreArvore;
 
 public class Contato {
 	public String nome, telefone, email;

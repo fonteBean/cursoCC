@@ -146,6 +146,11 @@ int tamanho()
 	return 0;
 }
 
+void remover(int x)
+{
+	raiz = removerRec(x, raiz);
+}
+
 int main()
 {
 	start();

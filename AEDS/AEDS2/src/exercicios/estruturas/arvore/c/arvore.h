@@ -22,9 +22,9 @@ void caminhar();
 
 void caminhaRec();
 
-int remover();
+void remover(int x);
 
-int removerRec();
+No *removerRec(int x, No *no);
 
 int getMaior();
 

@@ -1,4 +1,4 @@
-package exercicios.estruturas.hibrida;
+package exercicios.estruturas.hibrida.arvoreLista;
 
 public class No {
 	public char letra;
