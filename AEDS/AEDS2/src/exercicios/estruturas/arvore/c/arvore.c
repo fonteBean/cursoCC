@@ -109,6 +109,23 @@ bool div11Rec(No *no)
 	return resp;
 }
 
+int getMaior()
+{
+	if (raiz != NULL)
+	{
+		return getMaiorRec(raiz);
+	}
+}
+
+int getMaiorRec(No *no)
+{
+	if (no->dir == NULL)
+	{
+		return no->elemento;
+	}
+	return getMaiorRec(no->dir);
+}
+
 int tamanhoRec(int tam, No *pai)
 {
 	if (pai == NULL)

@@ -3,10 +3,10 @@
 #include <stdbool.h>
 #include "no.c"
 
-typedef struct Arvore{
-	No* raiz;
-}Arvore;
-
+typedef struct Arvore
+{
+	No *raiz;
+} Arvore;
 
 void limpar();
 
@@ -16,11 +16,19 @@ void start();
 
 void inserir(int x);
 
-No* inserirRec(int x, No* pai);
+No *inserirRec(int x, No *pai);
 
 void caminhar();
 
 void caminhaRec();
+
+int remover();
+
+int removerRec();
+
+int getMaior();
+
+int getMaiorRec(No *no);
 
 int soma();
 
@@ -36,4 +44,4 @@ bool div11Rec(No *no);
 
 int tamanho();
 
-int tamanhoRec(int tam, No*pai);
+int tamanhoRec(int tam, No *pai);
