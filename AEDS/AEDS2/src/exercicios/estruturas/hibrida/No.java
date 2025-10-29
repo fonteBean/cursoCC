@@ -40,7 +40,7 @@ public class No {
 		int pos = busca(nome);
 		if (pos < 0)
 			return null;
-		Celula tmp = primeiro.prox;
+		Celula tmp = primeiro;
 		for (int i = 0; i < pos; i++, tmp = tmp.prox)
 			;
 		tmp.prox = tmp.prox.prox;
