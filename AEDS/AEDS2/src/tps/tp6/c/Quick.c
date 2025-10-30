@@ -81,6 +81,17 @@ char *remover(Lista jogos, int pos)
     free(tmp);
     return
 }
+// Corigir esta merda dps
+
+char *removerNoFim(Lista jogos)
+{
+    Game *g = primeiro;
+    char *nome;
+    strcpy(jogos->ultimo->nome, nome) for (; g->prox != jogos->ultimo; g = g->prox);
+    jogos->ultimo = g;
+    g = g->prox;
+    free(g);
+}
 
 int tam(Lista jogos)
 {
@@ -463,7 +474,7 @@ Game *leJogos(int *qtd)
     }
     fclose(fr);
 
-    Game *games = (Game *)malloc(sizeof(Game) * (total > 0 ? total : 1));
+    Game games = (Game *)malloc(sizeof(Game) * (total > 0 ? total : 1));
     if (!games)
     {
         perror("Erro ao alocar memória para jogos");
@@ -573,13 +584,17 @@ void quicksort(Game jogos[], int esq, int dir)
     }
 }
 
+Lista subLista(Lista jogos)
+{
+}
+
 int main()
 {
     int total = 0;
-    Game *Games = leJogos(&total);
-    if (!Games)
+    Game *listaDoCsv = leJogos(&total);
+    if (!listaDoCsv)
         return 1;
-    Game *buscas = malloc(sizeof(Game) * total);
+    Game *lista = malloc(sizeof(Game) * total);
     char entrada[TAMFIELD];
     int numBuscas = 0;
     while (fgets(entrada, sizeof(entrada), stdin))
@@ -592,9 +607,9 @@ int main()
         int id = atoi(entrada);
         for (int k = 0; k < total; k++)
         {
-            if (Games[k].id == id)
+            if (listaDoCsv[k].id == id)
             {
-                buscas[numBuscas] = Games[k];
+                lista[numBuscas] = listaDoCsv[k];
                 numBuscas++;
             }
         }
@@ -602,22 +617,22 @@ int main()
     clock_t inicio, fim;
     double tempo_cpu;
     inicio = clock();
-    quicksort(buscas, 0, numBuscas - 1);
+    quicksort(lista, 0, numBuscas - 1);
     fim = clock();
     tempo_cpu = ((fim - inicio) / (double)CLOCKS_PER_SEC) * 1000.0;
     escreveLog(tempo_cpu, comparacoes, movimentacoes);
 
     for (int i = 0; i < numBuscas; i++)
     {
-        printGame(&buscas[i]);
+        printGame(&lista[i]);
     }
 
     for (int k = 0; k < total; k++)
     {
-        freeGame(&Games[k]);
+        freeGame(&listaDoCsv[k]);
     }
 
-    free(Games);
-    free(buscas);
+    free(listaDoCsv);
+    free(lista);
     return 0;
 }

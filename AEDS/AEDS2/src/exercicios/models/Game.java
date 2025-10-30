@@ -28,6 +28,11 @@ public class Game {
         prox = null;
     }
 
+    public Game(int id) {
+        this.id = id;
+        prox = null;
+    }
+
     public static String consertaData(String data) {
 
         String[] meses = { "Jan", "Feb", "Mar", "Apr", "May", "Jun",
