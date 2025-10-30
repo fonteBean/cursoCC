@@ -1,6 +1,4 @@
-package tps.tp6;
 
-import exercicios.estruturas.Celula;
 import exercicios.models.Game;
 
 public class Lista {

@@ -1,9 +1,7 @@
-package tps.tp6;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.Scanner;
-
 import exercicios.models.Game;
 
 public class Main {
@@ -32,11 +30,16 @@ public class Main {
 
     Lista subLista = new Lista();
     try (Scanner scanf = new Scanner(System.in)) {
-      String ni = scanf.nextLine();
-      int id = Integer.parseInt(ni);
-      Game g = jogos.buscaGame(id);
-      if (g != null) {
-        subLista.inserirNoInicio(g);
+      String line = scanf.nextLine();
+      while (!line.equals("FIM")) {
+        int id = Integer.parseInt(line);
+        Game g = jogos.buscaGame(id);
+        if (g != null) {
+          subLista.inserirNoInicio(g);
+        } else {
+          System.out.println("Not Found");
+        }
+        line = scanf.nextLine();
       }
     } catch (Exception e) {
       System.out.println(e.getMessage());
@@ -78,20 +81,22 @@ public class Main {
 
   public static void main(String[] args) {
     Lista jogos = new Lista();
-    Lista listaDoCsv = new Lista();
     String path = "/tmp/games.csv";
-    leCsv(listaDoCsv, path);
+    leCsv(jogos, path);
+    jogos.mostrar();
+
     Lista subLista = criaSubArray(jogos);
     subLista.mostrar();
 
     try (Scanner scanf = new Scanner(System.in)) {
-      String ni = scanf.nextLine();
-      int n = Integer.parseInt(ni);
+
+      String line = scanf.nextLine();
+      int n = Integer.parseInt(line);
+
       for (int i = 0; i < n; i++) {
         menu(subLista, scanf.nextLine());
       }
       subLista.mostrar();
-
     } catch (Exception e) {
       System.out.println(e.getMessage());
     }
