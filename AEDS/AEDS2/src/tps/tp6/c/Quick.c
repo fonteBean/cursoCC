@@ -58,6 +58,30 @@ void inserirNoFim(Lista jogos, Game g)
     ultimo = g;
 }
 
+char *removerNoInicio(Lista jogos)
+{
+    char *nome;
+    strcpy(jogos->primeiro->nome, nome);
+    Game *tmp = primeiro;
+    primeiro = primeiro->prox;
+    free(tmp);
+    return nome;
+}
+
+char *remover(Lista jogos, int pos)
+{
+    if (pos > tam(jogos))
+    {
+        printf("erro de posicao") return;
+    }
+    Game *tmp = primeiro;
+    for (int i = 0; i < pos; i++, tmp = tmp->prox)
+        ;
+    tmp->prox = tmp->prox->prox;
+    free(tmp);
+    return
+}
+
 int tam(Lista jogos)
 {
     int i = 0;
