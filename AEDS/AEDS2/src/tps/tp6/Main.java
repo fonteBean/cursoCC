@@ -1,14 +1,12 @@
+package tps.tp6;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.Scanner;
+
 import exercicios.models.Game;
 
 public class Main {
-
-  static int movimentacoes = 0;
-  static int comparacoes = 0;
-  static long tempo;
 
   public static void leCsv(Lista jogos, String path) {
     try (BufferedReader scanf = new BufferedReader(new FileReader(path))) {
@@ -29,7 +27,8 @@ public class Main {
   public static Lista criaSubArray(Lista jogos) {
 
     Lista subLista = new Lista();
-    try (Scanner scanf = new Scanner(System.in)) {
+    try {
+      Scanner scanf = new Scanner(System.in);
       String line = scanf.nextLine();
       while (!line.equals("FIM")) {
         int id = Integer.parseInt(line);
@@ -41,6 +40,7 @@ public class Main {
         }
         line = scanf.nextLine();
       }
+      scanf.close();
     } catch (Exception e) {
       System.out.println(e.getMessage());
     }
@@ -85,13 +85,15 @@ public class Main {
     leCsv(jogos, path);
     jogos.mostrar();
 
+    Scanner scanf = new Scanner(System.in);
     Lista subLista = criaSubArray(jogos);
     subLista.mostrar();
 
-    try (Scanner scanf = new Scanner(System.in)) {
-
+    try {
+      System.out.println("Fode na penha");
       String line = scanf.nextLine();
       int n = Integer.parseInt(line);
+      System.out.println("trepa na selva na penha");
 
       for (int i = 0; i < n; i++) {
         menu(subLista, scanf.nextLine());
@@ -101,5 +103,6 @@ public class Main {
       System.out.println(e.getMessage());
     }
 
+    scanf.close();
   }
 }

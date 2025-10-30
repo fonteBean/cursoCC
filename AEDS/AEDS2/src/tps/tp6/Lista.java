@@ -1,4 +1,6 @@
+package tps.tp6;
 
+import exercicios.estruturas.Celula;
 import exercicios.models.Game;
 
 public class Lista {
@@ -27,7 +29,6 @@ public class Lista {
   public void inserirNoInicio(Game g) {
     g.prox = primeiro.prox;
     primeiro.prox = g;
-    g = null;
   }
 
   public void inserir(Game g, int pos) throws Exception {
@@ -45,7 +46,6 @@ public class Lista {
   public void inserirNoFim(Game g) {
     ultimo.prox = g;
     ultimo = g;
-    g = null;
   }
 
   public void inserirNoInicio(String nome) {
