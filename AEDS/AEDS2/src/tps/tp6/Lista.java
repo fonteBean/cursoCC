@@ -108,4 +108,13 @@ public class Lista {
     return e;
   }
 
+  public Game buscaGame(int id) {
+    for (Game g = primeiro; g != null; g = g.prox) {
+      if (g.getId() == id) {
+        return g;
+      }
+    }
+    return null;
+  }
+
 }

@@ -23,9 +23,25 @@ public class Main {
         line = scanf.readLine();
       }
     } catch (Exception e) {
-      System.out.println(e.getMessage() + "ee");
+      System.out.println(e.getMessage());
     }
     return;
+  }
+
+  public static Lista criaSubArray(Lista jogos) {
+
+    Lista subLista = new Lista();
+    try (Scanner scanf = new Scanner(System.in)) {
+      String ni = scanf.nextLine();
+      int id = Integer.parseInt(ni);
+      Game g = jogos.buscaGame(id);
+      if (g != null) {
+        subLista.inserirNoInicio(g);
+      }
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+    }
+    return subLista;
   }
 
   public static void menu(Lista jogos, String entrada) throws Exception {
@@ -62,19 +78,19 @@ public class Main {
 
   public static void main(String[] args) {
     Lista jogos = new Lista();
+    Lista listaDoCsv = new Lista();
     String path = "/tmp/games.csv";
-    // leCsv(jogos, path);
-    jogos.inserirNoInicio("The last");
-    jogos.inserirNoInicio("xicrinha");
-    jogos.inserirNoInicio("sapeca");
-    jogos.mostrar();
+    leCsv(listaDoCsv, path);
+    Lista subLista = criaSubArray(jogos);
+    subLista.mostrar();
+
     try (Scanner scanf = new Scanner(System.in)) {
       String ni = scanf.nextLine();
-      int n = Integer.parseInt(ni);// numero de entradas
+      int n = Integer.parseInt(ni);
       for (int i = 0; i < n; i++) {
-        menu(jogos, scanf.nextLine());
+        menu(subLista, scanf.nextLine());
       }
-      jogos.mostrar();
+      subLista.mostrar();
 
     } catch (Exception e) {
       System.out.println(e.getMessage());
