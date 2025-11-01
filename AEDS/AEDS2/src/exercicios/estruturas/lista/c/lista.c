@@ -115,6 +115,30 @@ void limpar(Celula *cabeca){
 	}
 };
 
+
+
+void inverteRec(Celula *i, Celula *j)
+{
+	if(i == j){
+		return;
+	}
+	int e = i->e;
+	i->e = j->e;
+	j->e = e;
+
+	Celula *tmp = i;
+	for(;tmp->prox != j;tmp = tmp->prox);
+	inverteRec(i->prox,tmp);
+}
+
+void inverte(Celula *cabeca){
+	Celula *i = cabeca->prox;
+	Celula *j = cabeca;
+	for(;j->prox != NULL; j = j->prox);
+	inverteRec(i,j);
+}
+
+
 int main()
 {
 	Celula *cabeca = novaCelula(0);
@@ -122,13 +146,11 @@ int main()
 
 	inserirNoFim(cabeca,1);
 	inserirNoFim(cabeca,2);
-	inserir(cabeca,3,1);
+	inserir(cabeca,3,2);
 	
 	imprime(cabeca);
 	
-	int i = remover(cabeca,1);
-	printf("%i\n", i);
-
+	inverte(cabeca);
 	imprime(cabeca);
 
 	limpar(cabeca);
