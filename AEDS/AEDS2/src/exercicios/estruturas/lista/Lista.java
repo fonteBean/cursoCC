@@ -34,6 +34,22 @@ public class Lista {
     tmp = null;
   }
 
+  public void inverter() {
+    Celula i = inicio;
+    Celula j = fim;
+    System.out.println(j.elemento);
+    Celula k = inicio.prox;
+    for (; k.prox != j; k = k.prox) {
+      System.out.println(k.elemento);
+    }
+    ;
+    int e = i.elemento;
+    i.elemento = j.elemento;
+    j.elemento = e;
+    i = i.prox;
+    j = k;
+  }
+
   public void inserir(int x, int pos) throws Exception {
     if (pos > this.tam() || pos < 0) {
       throw new Exception();
@@ -79,8 +95,8 @@ public class Lista {
   }
 
   public int removerNoFim() {
-    Celula i = inicio;
-    for (; i.prox != fim; i = i.prox)
+    Celula i = inicio.prox;
+    for (; i.prox != null; i = i.prox)
       ;
     int e = fim.elemento;
     fim = i;
@@ -103,5 +119,4 @@ public class Lista {
     return e;
   }
 
-    
 }
