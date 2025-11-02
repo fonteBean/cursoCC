@@ -1,4 +1,3 @@
-package tps.tp6;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -295,7 +294,7 @@ public class Main {
         throw new Exception();
       }
       Game tmp = primeiro.prox;
-      for (int i = 0; i < pos; i++, tmp = tmp.prox)
+      for (int i = 0; i < pos - 1; i++, tmp = tmp.prox)
         ;
       g.prox = tmp.prox;
       tmp.prox = g;

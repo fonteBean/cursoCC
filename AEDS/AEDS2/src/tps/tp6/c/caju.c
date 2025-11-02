@@ -70,7 +70,7 @@ void inserir(Lista *lista, Game *g, int pos)
     }
 
     Game *tmp = lista->p;
-    for (int i = 0; i < pos - 1 && tmp != NULL; i++)
+    for (int i = 0; i < pos && tmp != NULL; i++)
         tmp = tmp->prox;
 
     if (!tmp)
@@ -120,7 +120,7 @@ char *remover(Lista *lista, int pos)
         return removerDoInicio(lista);
 
     Game *tmp = lista->p;
-    for (int i = 0; i < pos - 1 && tmp != NULL; i++)
+    for (int i = 0; i < pos && tmp != NULL; i++)
         tmp = tmp->prox;
 
     if (!tmp || !tmp->prox)
@@ -583,7 +583,7 @@ int imprimeLista(Lista *lista)
     return i;
 }
 
-Game *buscaGameClone(Lista *lista, int id)
+Game *buscaGame(Lista *lista, int id)
 {
     for (Game *tmp = lista->p; tmp != NULL; tmp = tmp->prox)
     {
@@ -671,16 +671,6 @@ Game *buscaGameClone(Lista *lista, int id)
     return NULL;
 }
 
-Game *buscaGame(Lista *lista, int id)
-{
-    for (Game *tmp = lista->p; tmp != NULL; tmp = tmp->prox)
-    {
-        if (tmp->id == id)
-            return tmp;
-    }
-    return NULL;
-}
-
 void menu(Lista *baseCsv, Lista *lista, const char *entrada)
 {
     char copia[TAMFIELD];
@@ -697,7 +687,6 @@ void menu(Lista *baseCsv, Lista *lista, const char *entrada)
         return;
     }
 
-    Game *g = NULL;
     int id, pos;
 
     if (strcmp(op, "II") == 0)
@@ -783,7 +772,7 @@ Lista *criaSubLista(Lista *jogos)
             continue;
 
         int id = atoi(p);
-        Game *g = buscaGameClone(jogos, id);
+        Game *g = buscaGame(jogos, id);
 
         if (g)
         {

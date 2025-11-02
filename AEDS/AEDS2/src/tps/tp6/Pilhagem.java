@@ -1,11 +1,8 @@
-package tps.tp6;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.Arrays;
 import java.util.Scanner;
-
-import exercicios.models.Game;
 
 public class Pilhagem {
 
