@@ -9,7 +9,7 @@
 #define TAMROW 50000
 #define TAMFIELD 2056
 
-typedef struct
+typedef struct Game
 {
     int id, estimedOwners, metacriticScore, achiviments,
         qtdsupportedLanguages, qtdPublishers, qtdDevelopers, qtdGenres,
@@ -26,7 +26,6 @@ typedef struct
 
 } Game;
 
-//- Listas -
 typedef struct Lista
 {
     Game *p, *u;
@@ -44,7 +43,7 @@ void limpaListaRec(Game *g)
 {
     if (g == NULL)
         return;
-    limpaRec(g->prox);
+    limpaListaRec(g->prox);
     free(g);
 }
 
@@ -168,18 +167,6 @@ int tam(Lista *lista)
         i++;
     return i;
 }
-
-void imprimeLista(Lista *lista)
-{
-    int i = 0;
-    for (Game *tmp = lista->p; tmp != NULL; tmp = tmp->prox, i++)
-    {
-        printf("[%d] ", i);
-        printGame(*tmp);
-    }
-}
-
-//- Lista -
 
 void freeVec(char ***vector, int *qtd)
 {
@@ -529,7 +516,7 @@ void gameFromCsv(Game *j, const char *row)
     }
 }
 
-Game *leJogos(int *qtd)
+Lista *leJogos()
 {
     setlocale(LC_NUMERIC, "C");
 
@@ -538,71 +525,39 @@ Game *leJogos(int *qtd)
     if (!fr)
     {
         perror("Erro ao abrir /tmp/games.csv");
-        *qtd = 0;
         return NULL;
     }
 
     char row[TAMROW];
-    int total = 0;
+    Lista *lista = novaLista();
 
-    if (fgets(row, sizeof(row), fr))
+    if (!fgets(row, sizeof(row), fr))
     {
-        while (fgets(row, sizeof(row), fr))
-            total++;
+        fclose(fr);
+        return lista;
     }
-    fclose(fr);
-
-    Game games = (Game *)malloc(sizeof(Game) * (total > 0 ? total : 1));
-    if (!games)
-    {
-        perror("Erro ao alocar memória para jogos");
-        *qtd = 0;
-        return NULL;
-    }
-
-    fr = fopen(path, "r");
-    if (!fr)
-    {
-        perror("Erro ao reabrir /tmp/games.csv");
-        free(games);
-        *qtd = 0;
-        return NULL;
-    }
-
-    int i = 0;
-    fgets(row, sizeof(row), fr);
 
     while (fgets(row, sizeof(row), fr))
     {
         row[strcspn(row, "\r\n")] = 0;
-        if (i < total)
+
+        Game *novo = malloc(sizeof(Game));
+        if (!novo)
         {
-            gameFromCsv(&games[i], row);
-            i++;
+            perror("Erro ao alocar memória para jogo");
+            fclose(fr);
+            limpaLista(lista);
+            return NULL;
         }
+
+        gameFromCsv(novo, row);
+        novo->prox = NULL;
+        inserirNoFim(lista, novo);
     }
 
     fclose(fr);
-
-    *qtd = i;
-    return games;
+    return lista;
 }
-
-void escreveLog(double tempo, int comparacoes, int movimentacoes)
-{
-    FILE *arquivo = fopen("889080_quick.txt", "w");
-    if (arquivo == NULL)
-    {
-        perror("Erro ao abrir o arquivo de log");
-        return;
-    }
-
-    fprintf(arquivo, "889080\tTempo de execução = %.3f ms\tNúmero de comparações = %d\tNúmero de movimentações = %d\n", tempo, comparacoes, movimentacoes);
-    fclose(arquivo);
-}
-
-static int comparacoes = 0;
-static int movimentacoes = 0;
 
 int dataParaInt(const char *dataStr)
 {
@@ -616,109 +571,264 @@ int dataParaInt(const char *dataStr)
     return 0;
 }
 
-void swap(Game *a, Game *b)
-{
-    Game temp = *a;
-    *a = *b;
-    *b = temp;
-    movimentacoes += 3;
-    return;
-}
-
-int particiona(Game jogos[], int esq, int dir)
-{
-    long pivoData = dataParaInt(jogos[(esq + dir) / 2].releaseDate);
-    int i = esq - 1;
-    int j = dir + 1;
-    while (true)
-    {
-        do
-        {
-            i++;
-            comparacoes++;
-        } while (dataParaInt(jogos[i].releaseDate) < pivoData);
-
-        do
-        {
-            j--;
-            comparacoes++;
-        } while (dataParaInt(jogos[j].releaseDate) > pivoData);
-
-        if (i >= j)
-        {
-            return j;
-        }
-        swap(&jogos[i], &jogos[j]);
-    }
-}
-
-void quicksort(Game jogos[], int esq, int dir)
-{
-    if (esq < dir)
-    {
-        int p = particiona(jogos, esq, dir);
-        quicksort(jogos, esq, p);
-        quicksort(jogos, p + 1, dir);
-    }
-}
-
-int imprimeLista(Lista lista)
+int imprimeLista(Lista *lista)
 {
     int i = 0;
-    for (Game *tmp = lista->p->prox; tmp != NULL; tmp = tmp->prox; i++)
+    for (Game *tmp = lista->p->prox; tmp != NULL; tmp = tmp->prox, i++)
     {
         printf("[%d] ", i);
-        printGame(*tmp);
+        printGame(tmp);
     }
 
     return i;
 }
 
-int main()
+Game *buscaGameClone(Lista *lista, int id)
 {
-    int total = 0;
-    Game *listaDoCsv = leJogos(&total);
-    if (!listaDoCsv)
-        return 1;
-    Game *lista = malloc(sizeof(Game) * total);
-    char entrada[TAMFIELD];
-    int numBuscas = 0;
-    while (fgets(entrada, sizeof(entrada), stdin))
+    for (Game *tmp = lista->p; tmp != NULL; tmp = tmp->prox)
     {
-        entrada[strcspn(entrada, "\r\n")] = 0;
-        if (entrada[0] == '\0')
-            continue;
-        if (strcmp(entrada, "FIM") == 0)
-            break;
-        int id = atoi(entrada);
-        for (int k = 0; k < total; k++)
+        if (tmp->id == id)
         {
-            if (listaDoCsv[k].id == id)
+            Game *clone = malloc(sizeof(Game));
+            if (!clone)
+                return NULL;
+
+            *clone = *tmp;
+
+            clone->name = strdup(tmp->name);
+            clone->releaseDate = strdup(tmp->releaseDate);
+
+            if (tmp->qtdsupportedLanguages > 0)
             {
-                lista[numBuscas] = listaDoCsv[k];
-                numBuscas++;
+                clone->supportedLanguages = malloc(sizeof(char *) * tmp->qtdsupportedLanguages);
+                for (int i = 0; i < tmp->qtdsupportedLanguages; i++)
+                    clone->supportedLanguages[i] = strdup(tmp->supportedLanguages[i]);
             }
+            else
+            {
+                clone->supportedLanguages = NULL;
+            }
+
+            if (tmp->qtdPublishers > 0)
+            {
+                clone->publishers = malloc(sizeof(char *) * tmp->qtdPublishers);
+                for (int i = 0; i < tmp->qtdPublishers; i++)
+                    clone->publishers[i] = strdup(tmp->publishers[i]);
+            }
+            else
+            {
+                clone->publishers = NULL;
+            }
+
+            if (tmp->qtdDevelopers > 0)
+            {
+                clone->developers = malloc(sizeof(char *) * tmp->qtdDevelopers);
+                for (int i = 0; i < tmp->qtdDevelopers; i++)
+                    clone->developers[i] = strdup(tmp->developers[i]);
+            }
+            else
+            {
+                clone->developers = NULL;
+            }
+
+            if (tmp->qtdCategories > 0)
+            {
+                clone->categories = malloc(sizeof(char *) * tmp->qtdCategories);
+                for (int i = 0; i < tmp->qtdCategories; i++)
+                    clone->categories[i] = strdup(tmp->categories[i]);
+            }
+            else
+            {
+                clone->categories = NULL;
+            }
+
+            if (tmp->qtdGenres > 0)
+            {
+                clone->genres = malloc(sizeof(char *) * tmp->qtdGenres);
+                for (int i = 0; i < tmp->qtdGenres; i++)
+                    clone->genres[i] = strdup(tmp->genres[i]);
+            }
+            else
+            {
+                clone->genres = NULL;
+            }
+
+            if (tmp->qtdTags > 0)
+            {
+                clone->tags = malloc(sizeof(char *) * tmp->qtdTags);
+                for (int i = 0; i < tmp->qtdTags; i++)
+                    clone->tags[i] = strdup(tmp->tags[i]);
+            }
+            else
+            {
+                clone->tags = NULL;
+            }
+
+            clone->prox = NULL;
+            return clone;
         }
     }
-    clock_t inicio, fim;
-    double tempo_cpu;
-    inicio = clock();
-    quicksort(lista, 0, numBuscas - 1);
-    fim = clock();
-    tempo_cpu = ((fim - inicio) / (double)CLOCKS_PER_SEC) * 1000.0;
-    escreveLog(tempo_cpu, comparacoes, movimentacoes);
+    return NULL;
+}
 
-    for (int i = 0; i < numBuscas; i++)
+Game *buscaGame(Lista *lista, int id)
+{
+    for (Game *tmp = lista->p; tmp != NULL; tmp = tmp->prox)
     {
-        printGame(&lista[i]);
+        if (tmp->id == id)
+            return tmp;
+    }
+    return NULL;
+}
+
+void menu(Lista *baseCsv, Lista *lista, const char *entrada)
+{
+    char copia[TAMFIELD];
+    strncpy(copia, entrada, sizeof(copia));
+    copia[sizeof(copia) - 1] = '\0';
+
+    char *op = strtok(copia, " ");
+    char *arg1 = strtok(NULL, " ");
+    char *arg2 = strtok(NULL, " ");
+
+    if (!op)
+    {
+        printf("Escreva uma opção válida\n");
+        return;
     }
 
-    for (int k = 0; k < total; k++)
+    Game *g = NULL;
+    int id, pos;
+
+    if (strcmp(op, "II") == 0)
     {
-        freeGame(&listaDoCsv[k]);
+        if (!arg1)
+            return;
+        id = atoi(arg1);
+        Game *novo = buscaGame(baseCsv, id);
+        if (novo)
+            inserirNoInicio(lista, novo);
+    }
+    else if (strcmp(op, "I*") == 0)
+    {
+        if (!arg1 || !arg2)
+            return;
+        pos = atoi(arg1);
+        id = atoi(arg2);
+        Game *novo = buscaGame(baseCsv, id);
+        if (novo)
+            inserir(lista, novo, pos);
+    }
+    else if (strcmp(op, "IF") == 0)
+    {
+        if (!arg1)
+            return;
+        id = atoi(arg1);
+        Game *novo = buscaGame(baseCsv, id);
+        if (novo)
+            inserirNoFim(lista, novo);
+    }
+    else if (strcmp(op, "RI") == 0)
+    {
+        char *nome = removerDoInicio(lista);
+        if (nome)
+        {
+            printf("(R) %s\n", nome);
+            free(nome);
+        }
+    }
+    else if (strcmp(op, "R*") == 0)
+    {
+        if (!arg1)
+            return;
+        pos = atoi(arg1);
+        char *nome = remover(lista, pos);
+        if (nome)
+        {
+            printf("(R) %s\n", nome);
+            free(nome);
+        }
+    }
+    else if (strcmp(op, "RF") == 0)
+    {
+        char *nome = removerDoFim(lista);
+        if (nome)
+        {
+            printf("(R) %s\n", nome);
+            free(nome);
+        }
+    }
+    else
+    {
+        printf("Escreva uma opção válida\n");
+    }
+}
+
+Lista *criaSubLista(Lista *jogos)
+{
+    Lista *subLista = novaLista();
+    char linha[TAMFIELD];
+
+    while (fgets(linha, sizeof(linha), stdin))
+    {
+        linha[strcspn(linha, "\r\n")] = 0;
+        char *p = linha;
+        while (*p && isspace((unsigned char)*p))
+            p++;
+
+        if (strcmp(p, "FIM") == 0)
+            break;
+
+        if (*p == '\0')
+            continue;
+
+        int id = atoi(p);
+        Game *g = buscaGameClone(jogos, id);
+
+        if (g)
+        {
+            inserirNoFim(subLista, g);
+        }
+        else
+        {
+            printf("Not Found\n");
+        }
     }
 
-    free(listaDoCsv);
-    free(lista);
+    return subLista;
+}
+
+int main()
+{
+    Lista *jogos = leJogos();
+    if (!jogos)
+        return 1;
+
+    Lista *subLista = criaSubLista(jogos);
+
+    char linha[TAMFIELD];
+    if (!fgets(linha, sizeof(linha), stdin))
+    {
+        printf("Erro ao ler o número de operações.\n");
+        limpaLista(subLista);
+        limpaLista(jogos);
+        return 1;
+    }
+
+    int n = atoi(linha);
+
+    for (int i = 0; i < n; i++)
+    {
+        if (!fgets(linha, sizeof(linha), stdin))
+            break;
+        linha[strcspn(linha, "\r\n")] = 0;
+        menu(jogos, subLista, linha);
+    }
+
+    imprimeLista(subLista);
+
+    limpaLista(subLista);
+    limpaLista(jogos);
+
     return 0;
 }
