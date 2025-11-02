@@ -1,6 +1,5 @@
 package tps.tp6;
 
-import exercicios.estruturas.Celula;
 import exercicios.models.Game;
 
 public class Lista {
@@ -12,9 +11,12 @@ public class Lista {
   }
 
   public void mostrar() {
+    int indice = 0;
     Game i = primeiro.prox;
     while (i != null) {
-      System.out.println(i.getNome());
+      System.out.printf("[%d] ", indice);
+      i.imprimir();
+      indice++;
       i = i.prox;
     }
   }
@@ -29,6 +31,8 @@ public class Lista {
   public void inserirNoInicio(Game g) {
     g.prox = primeiro.prox;
     primeiro.prox = g;
+    if (ultimo == primeiro)
+      ultimo = g;
   }
 
   public void inserir(Game g, int pos) throws Exception {
@@ -40,7 +44,6 @@ public class Lista {
       ;
     g.prox = tmp.prox;
     tmp.prox = g;
-    tmp = null;
   }
 
   public void inserirNoFim(Game g) {
@@ -48,51 +51,25 @@ public class Lista {
     ultimo = g;
   }
 
-  public void inserirNoInicio(String nome) {
-    Game g = new Game(nome);
-    g.prox = primeiro.prox;
-    primeiro.prox = g;
-    g = null;
-  }
-
-  public void inserir(String nome, int pos) throws Exception {
-    if (pos > this.tam()) {
-      throw new Exception();
-    }
-    Game tmp = primeiro.prox;
-    for (int i = 0; i < pos; i++, tmp = tmp.prox)
-      ;
-    Game g = new Game(nome);
-    g.prox = tmp.prox;
-    tmp.prox = g;
-    tmp = null;
-  }
-
-  public void inserirNoFim(String nome) {
-    Game g = new Game(nome);
-    ultimo.prox = g;
-    ultimo = g;
-    g = null;
-  }
-
   public String removerNoInicio() {
     String nome = primeiro.prox.getNome();
     Game tmp = primeiro;
     primeiro = primeiro.prox;
-    tmp.prox = tmp = null;
+    tmp.prox = null;
     return nome;
   }
 
   public String remover(int pos) throws Exception {
-    if (pos > this.tam()) {
-      throw new Exception();
+    if (pos < 0 || pos >= this.tam()) {
+      throw new Exception("Posição inválida");
     }
+
     Game tmp = primeiro;
     for (int i = 0; i < pos; i++, tmp = tmp.prox)
       ;
+
     String nome = tmp.prox.getNome();
     tmp.prox = tmp.prox.prox;
-    tmp.prox = tmp = null;
     return nome;
   }
 
@@ -102,12 +79,12 @@ public class Lista {
       ;
     String e = ultimo.getNome();
     ultimo = i;
-    ultimo.prox = i = null;
+    ultimo.prox = null;
     return e;
   }
 
   public Game buscaGame(int id) {
-    for (Game g = primeiro; g != null; g = g.prox) {
+    for (Game g = primeiro.prox; g != null; g = g.prox) {
       if (g.getId() == id) {
         return g;
       }

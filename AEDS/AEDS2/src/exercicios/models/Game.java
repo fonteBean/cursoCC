@@ -226,4 +226,29 @@ public class Game {
                         Arrays.toString(this.getGenres()).replaceAll(",\\s*", ", ") + " ## " +
                         Arrays.toString(this.getTags()).replaceAll(",\\s*", ", ") + " ##");
     }
+
+    @Override
+    public Game clone() {
+        Game copia = new Game();
+        copia.id = this.id;
+        copia.nome = this.nome;
+        copia.releaseDate = this.releaseDate;
+        copia.estimedOwners = this.estimedOwners;
+        copia.price = this.price;
+        copia.metacriticScore = this.metacriticScore;
+        copia.userScore = this.userScore;
+        copia.achiviments = this.achiviments;
+
+        copia.supportedLanguages = this.supportedLanguages != null ? this.supportedLanguages.clone() : null;
+        copia.publishers = this.publishers != null ? this.publishers.clone() : null;
+        copia.developers = this.developers != null ? this.developers.clone() : null;
+        copia.categories = this.categories != null ? this.categories.clone() : null;
+        copia.genres = this.genres != null ? this.genres.clone() : null;
+        copia.tags = this.tags != null ? this.tags.clone() : null;
+
+        copia.prox = null;
+
+        return copia;
+    }
+
 }
