@@ -7,13 +7,13 @@ typedef struct Celula
 	struct Celula *prox;
 } Celula;
 
-typedef struct Lista
+typedef struct Pilha
 {
 	Celula primeiro = NULL;
 	Celula ultimo = primeiro;
-} Lista;
+} Pilha;
 
-int remover(Lista lista)
+int remover(Pilha lista)
 {
 	for (Celula *tmp = primeiro; tmp->prox != tmp)
 }
@@ -26,7 +26,7 @@ Celula *novaCelula(int x)
 	return celula;
 }
 
-void inverte(Lista lista)
+void inverte(Pilha lista)
 {
 	if (lista->primeiro != lista->ultimo)
 	{
@@ -47,7 +47,7 @@ void inverte(Lista lista)
 	}
 }
 
-void imprime(Lista lista)
+void imprime(Pilha lista)
 {
 	for (Celula *tmp = lista->primeiro; tmp != NULL; tmp = tmp->prox)
 	{
